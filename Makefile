@@ -7,7 +7,7 @@ else
 endif
 LDFLAGS=-lm
 
-PROGS=db readback upd perf rect test offset pan ovl dbrot
+PROGS=db readback upd perf rect test offset pan ovl dbrot panner
 
 all: $(PROGS)
 
