@@ -20,6 +20,7 @@ static void readmem(int fd, int x, int y, int w, int h)
 	struct omapfb_memory_read mr;
 	int len;
 	int bytespp = 3;
+	int r;
 
 	mr.buffer_size = w * h * bytespp;
 	mr.buffer = malloc(mr.buffer_size);
@@ -28,7 +29,7 @@ static void readmem(int fd, int x, int y, int w, int h)
 	mr.w = w;
 	mr.h = h;
 
-	fprintf(stderr, "reading %d bytes\n", mr.buffer_size);
+	fprintf(stderr, "reading %zd bytes\n", mr.buffer_size);
 
 	len = ioctl(fd, OMAPFB_MEMORY_READ, &mr);
 
@@ -37,10 +38,13 @@ static void readmem(int fd, int x, int y, int w, int h)
 	if (len > 0) {
 		int ffd;
 		fprintf(stderr, "writing to buf-24.raw\n");
-		ffd = open("buf-24.raw", O_WRONLY | O_CREAT | O_TRUNC);
+		ffd = open("buf-24.raw", O_WRONLY | O_CREAT | O_TRUNC,
+				S_IRUSR | S_IWUSR);
 		if (ffd < 0)
 			printf("open failed\n");
-		write(ffd, mr.buffer, len);
+		r = write(ffd, mr.buffer, len);
+		if (r != len)
+			printf("write failed\n");
 		close(ffd);
 	}
 
@@ -49,7 +53,8 @@ static void readmem(int fd, int x, int y, int w, int h)
 		int i;
 		unsigned char *buf, *p1, *p2;
 		fprintf(stderr, "writing to buf-32.raw\n");
-		ffd = open("buf-32.raw", O_WRONLY | O_CREAT | O_TRUNC);
+		ffd = open("buf-32.raw", O_WRONLY | O_CREAT | O_TRUNC,
+				S_IRUSR | S_IWUSR);
 		if (ffd < 0)
 			printf("open failed\n");
 		buf = malloc(len * 4 / 3);
@@ -65,7 +70,9 @@ static void readmem(int fd, int x, int y, int w, int h)
 			p2 += 4;
 		}
 
-		write(ffd, buf, len * 4 / 3);
+		r = write(ffd, buf, len * 4 / 3);
+		if (r != len * 4 / 3)
+			printf("write failed\n");
 
 		close(ffd);
 		free(buf);
