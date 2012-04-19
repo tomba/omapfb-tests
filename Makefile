@@ -10,6 +10,7 @@ LDFLAGS=-lm
 PROGS=db readback upd perf rect test offset pan ovl dbrot panner
 
 all: $(PROGS)
+	$(CROSS_COMPILE)strip $(PROGS)
 
 .c.o: common.h font.h
 
