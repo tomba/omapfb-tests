@@ -17,8 +17,22 @@ int main(int argc, char** argv)
 	int fd;
 	int x, y, w, h;
 	struct omapfb_display_info *di;
+	int req_fb = 0;
+	int opt;
 
-	fb_open(0, &fb_info, 0);
+	while ((opt = getopt(argc, argv, "f:h")) != -1) {
+		switch (opt) {
+		case 'f':
+			req_fb = atoi(optarg);
+			break;
+		case 'h':
+		default:
+			printf("usage: ./upd [-f <fbnum>]\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	fb_open(req_fb, &fb_info, 0);
 
 	fd = fb_info.fd;
 	di = &fb_info.di;
