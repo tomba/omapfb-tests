@@ -1,10 +1,9 @@
 
 ifdef CROSS_COMPILE
 	CC=$(CROSS_COMPILE)gcc
-	CFLAGS=-I/home/valkeine/work/linux/usr/include -O2 -Wall
-else
-	CFLAGS=-O2 -Wall
 endif
+
+CFLAGS=-O2 -Wall
 LDFLAGS=-lm
 
 PROGS=db readback upd perf rect test offset pan ovl dbrot panner
@@ -14,9 +13,9 @@ all: $(PROGS)
 
 .c.o: common.h font.h
 
-test: test.o common.o font_8x8.c
-upd: upd.o common.o font_8x8.c
-ovl: ovl.o common.o font_8x8.c
+test: test.o common.o font_8x8.o
+upd: upd.o common.o font_8x8.o
+ovl: ovl.o common.o font_8x8.o
 
 clean:
 	rm -f $(PROGS) *.o
