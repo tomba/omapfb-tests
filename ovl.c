@@ -183,10 +183,10 @@ int main(int argc, char** argv)
 		unsigned x, y, w, h, ox, oy;
 
 		w = (sin((float)c * M_PI / 180 - M_PI / 2) + 1.0) / 2.0 *
-			400 + 8;
+			(fb_info.di.xres - 8 - 1) + 8;
 
 		h = (sin((float)c * M_PI / 180 *1.2 - M_PI / 2) + 1.0) / 2.0 *
-			400 + 8;
+			(fb_info.di.yres - 8 - 1) + 8;
 
 		x = (sin((float)c * M_PI / 180 - M_PI / 2) + 1.0) / 2.0 *
 			(fb_info.di.xres - w - 1);
@@ -206,6 +206,8 @@ int main(int argc, char** argv)
 			fb_update_window(fb_info.fd, 0, 0,
 					fb_info.di.xres, fb_info.di.yres);
 			fb_sync_gfx(fb_info.fd);
+		} else {
+			ioctl(fb_info.fd, OMAPFB_WAITFORGO);
 		}
 		c++;
 	}
