@@ -122,9 +122,9 @@ void move_ovl(unsigned x, unsigned y, unsigned w, unsigned h,
 	//printf("%d,%d %dx%d (%d,%d)\n", x, y, w, h, ox, oy);
 
 
-	IOCTL1(fd, OMAPFB_QUERY_PLANE, &pi);
-	pi.enabled = 0;
-	IOCTL1(fd, OMAPFB_SETUP_PLANE, &pi);
+	//IOCTL1(fd, OMAPFB_QUERY_PLANE, &pi);
+	//pi.enabled = 0;
+	//IOCTL1(fd, OMAPFB_SETUP_PLANE, &pi);
 
 	IOCTL1(fd, FBIOGET_VSCREENINFO, var);
 	var->xres = w;
