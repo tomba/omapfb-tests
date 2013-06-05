@@ -27,10 +27,20 @@ void fb_open(int fb_num, struct fb_info *fb_info, int reset)
 	ASSERT(fd >= 0);
 
 	fb_info->fd = fd;
-	IOCTL1(fd, OMAPFB_GET_DISPLAY_INFO, &fb_info->di);
+
 	IOCTL1(fd, FBIOGET_VSCREENINFO, &fb_info->var);
 	IOCTL1(fd, FBIOGET_FSCREENINFO, &fb_info->fix);
-	IOCTL1(fd, OMAPFB_GET_UPDATE_MODE, &fb_info->update_mode);
+
+	if (ioctl(fd, OMAPFB_GET_DISPLAY_INFO, &fb_info->di)) {
+		printf("OMAPFB_GET_DISPLAY_INFO not supported, using var resolution\n");
+		fb_info->di.xres = fb_info->var.xres;
+		fb_info->di.yres = fb_info->var.yres;
+	}
+
+	if (ioctl(fd, OMAPFB_GET_UPDATE_MODE, &fb_info->update_mode)) {
+		printf("OMAPFB_GET_UPDATE_MODE not supported, using auto update\n");
+		fb_info->update_mode = OMAPFB_AUTO_UPDATE;
+	}
 
 	if (reset) {
 		struct omapfb_mem_info mi;
