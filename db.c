@@ -212,8 +212,9 @@ int main(int argc, char **argv)
 	int req_yuv = 0;
 	int req_rot = 0;
 	int req_te = 1;
+	int req_skipdraw = 0;
 
-	while ((opt = getopt(argc, argv, "f:r:m:y:n:t")) != -1) {
+	while ((opt = getopt(argc, argv, "f:r:m:y:n:ts")) != -1) {
 		switch (opt) {
 		case 'f':
 			req_fb = atoi(optarg);
@@ -233,9 +234,12 @@ int main(int argc, char **argv)
 		case 'n':
 			req_nfrm = atoi(optarg);
 			break;
+		case 's':
+			req_skipdraw = 1;
+			break;
 		default:
 			printf("usage: ./db [-f <fbnum>] [-r <rot>] [-m <bitspp>] "
-					"[-y <yuv>] [-n <num_of_frames>] [-t]\n");
+					"[-y <yuv>] [-n <num_of_frames>] [-t] [-s]\n");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -398,7 +402,7 @@ int main(int argc, char **argv)
 			mess_frame(prev_frame);
 		}
 
-		if (1) {
+		if (!req_skipdraw) {
 			const int bar_width = 40;
 			const int speed = 8;
 			int bar_xpos = (frame * speed) %
