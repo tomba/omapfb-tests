@@ -14,8 +14,6 @@
 #include <linux/fb.h>
 #include <linux/omapfb.h>
 
-//#define READBACK
-
 #define ERROR(x) printf("fbtest error in line %s:%d: %s\n", __FUNCTION__, __LINE__, strerror(errno));
 
 #define FBCTL(cmd, arg)			\
@@ -179,7 +177,6 @@ void fill_screen(void *fbmem)
 	}
 }
 
-#if 0
 static void checkrect(int fd, int x, int y, int w, int h,
 		void *buf, unsigned buf_size, unsigned color)
 {
@@ -226,7 +223,6 @@ static void checkrect(int fd, int x, int y, int w, int h,
 		exit(1);
 	}
 }
-#endif
 
 int main(int argc, char** argv)
 {
@@ -281,9 +277,9 @@ int main(int argc, char** argv)
 
 		fb_update_window(fd, r.x, r.y, r.w, r.h);
 
-#ifdef READBACK
-		checkrect(fd, r.x, r.y, r.w, r.h, readbuf, readbuf_size, color);
-#endif
+		/* hack to read back the rect and verify the pixels */
+		if (0)
+			checkrect(fd, r.x, r.y, r.w, r.h, readbuf, readbuf_size, color);
 	}
 
 	return 0;

@@ -149,27 +149,14 @@ int main(int argc, char** argv)
 
 	int opt;
 	int req_fb = 0;
-	int req_bitspp = 32;
-	int req_yuv = 0;
-	int req_rot = 0;
 
-	while ((opt = getopt(argc, argv, "f:r:m:y:")) != -1) {
+	while ((opt = getopt(argc, argv, "f:")) != -1) {
 		switch (opt) {
 		case 'f':
 			req_fb = atoi(optarg);
 			break;
-		case 'r':
-			req_rot = atoi(optarg);
-			break;
-		case 'm':
-			req_bitspp = atoi(optarg);
-			break;
-		case 'y':
-			req_yuv = atoi(optarg);
-			break;
 		default:
-			printf("usage: -f <fbnum> -r <rot> -m <bitspp> "
-					"-y <yuv>\n");
+			printf("usage: -f <fbnum>\n");
 			exit(EXIT_FAILURE);
 		}
 	}

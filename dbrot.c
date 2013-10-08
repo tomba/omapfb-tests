@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 	void *fb_base;
 	char str[64];
 	enum omapfb_update_mode update_mode;
-	int manual;
+	//int manual;
 	struct omapfb_caps caps;
 
 	struct fb_info fb_info;
@@ -300,9 +300,9 @@ int main(int argc, char **argv)
 	FBCTL1(OMAPFB_GET_UPDATE_MODE, &update_mode);
 	if (update_mode == OMAPFB_MANUAL_UPDATE) {
 		printf("Manual update mode\n");
-		manual = 1;
+		//manual = 1;
 	} else {
-		manual = 0;
+		//manual = 0;
 	}
 
 	FBCTL1(OMAPFB_GET_CAPS, &caps);
