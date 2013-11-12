@@ -110,6 +110,12 @@ static void fill_screen(struct fb_info *fb_info)
 
 	}
 
+	char str[256];
+
+	sprintf(str, "%s: %dx%d", fb_info->fb_name, w, h);
+
+	fb_put_string2(fb_info, 20, 2, str, 0xffffff, 1);
+
 	fb_put_string(fb_info, w / 3 * 2, 30, "RED", 3, 0xffffff, 1, 3);
 	fb_put_string(fb_info, w / 3, 30, "GREEN", 5, 0xffffff, 1, 5);
 	fb_put_string(fb_info, 20, 30, "BLUE", 4, 0xffffff, 1, 4);

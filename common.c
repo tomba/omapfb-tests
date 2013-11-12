@@ -20,21 +20,24 @@ void fb_open(int fb_num, struct fb_info *fb_info, int reset)
 {
 	char str[64];
 	int fd;
+	struct fb_var_screeninfo *var = &fb_info->var;
 
 	sprintf(str, "/dev/fb%d", fb_num);
+	strcpy(fb_info->fb_name, str);
+
 	fd = open(str, O_RDWR);
 
 	ASSERT(fd >= 0);
 
 	fb_info->fd = fd;
 
-	IOCTL1(fd, FBIOGET_VSCREENINFO, &fb_info->var);
+	IOCTL1(fd, FBIOGET_VSCREENINFO, var);
 	IOCTL1(fd, FBIOGET_FSCREENINFO, &fb_info->fix);
 
 	if (ioctl(fd, OMAPFB_GET_DISPLAY_INFO, &fb_info->di)) {
 		printf("OMAPFB_GET_DISPLAY_INFO not supported, using var resolution\n");
-		fb_info->di.xres = fb_info->var.xres;
-		fb_info->di.yres = fb_info->var.yres;
+		fb_info->di.xres = var->xres;
+		fb_info->di.yres = var->yres;
 	}
 
 	if (ioctl(fd, OMAPFB_GET_UPDATE_MODE, &fb_info->update_mode)) {
@@ -46,40 +49,46 @@ void fb_open(int fb_num, struct fb_info *fb_info, int reset)
 		struct omapfb_mem_info mi;
 		struct omapfb_plane_info pi;
 
+		int bitspp = var->bits_per_pixel;
+
+		if (bitspp == 0)
+			bitspp = 32;
+
 		IOCTL1(fd, OMAPFB_QUERY_PLANE, &pi);
 		pi.enabled = 0;
 		IOCTL1(fd, OMAPFB_SETUP_PLANE, &pi);
 
 		FBCTL1(OMAPFB_QUERY_MEM, &mi);
 		mi.size = fb_info->di.xres * fb_info->di.yres *
-			fb_info->var.bits_per_pixel / 8;
+			bitspp / 8;
 		FBCTL1(OMAPFB_SETUP_MEM, &mi);
 
-		fb_info->var.xres_virtual = fb_info->var.xres = fb_info->di.xres;
-		fb_info->var.yres_virtual = fb_info->var.yres = fb_info->di.yres;
+		var->bits_per_pixel = bitspp;
+		var->xres_virtual = var->xres = fb_info->di.xres;
+		var->yres_virtual = var->yres = fb_info->di.yres;
 		FBCTL1(FBIOPUT_VSCREENINFO, &fb_info->var);
 
 		pi.pos_x = 0;
 		pi.pos_y = 0;
-		pi.out_width = fb_info->var.xres;
-		pi.out_height = fb_info->var.yres;
+		pi.out_width = var->xres;
+		pi.out_height = var->yres;
 		pi.enabled = 1;
 		FBCTL1(OMAPFB_SETUP_PLANE, &pi);
 
-		IOCTL1(fd, FBIOGET_VSCREENINFO, &fb_info->var);
+		IOCTL1(fd, FBIOGET_VSCREENINFO, var);
 		IOCTL1(fd, FBIOGET_FSCREENINFO, &fb_info->fix);
 		IOCTL1(fd, OMAPFB_GET_UPDATE_MODE, &fb_info->update_mode);
 	}
 
 	printf("display %dx%d\n", fb_info->di.xres, fb_info->di.yres);
 	printf("fb res %dx%d virtual %dx%d, line_len %d\n",
-			fb_info->var.xres, fb_info->var.yres,
-			fb_info->var.xres_virtual, fb_info->var.yres_virtual,
+			var->xres, var->yres,
+			var->xres_virtual, var->yres_virtual,
 			fb_info->fix.line_length);
-	printf("dim %dmm x %dmm\n", fb_info->var.width, fb_info->var.height);
+	printf("dim %dmm x %dmm\n", var->width, var->height);
 
 	void* ptr = mmap(0,
-			fb_info->var.yres_virtual * fb_info->fix.line_length,
+			var->yres_virtual * fb_info->fix.line_length,
 			PROT_WRITE | PROT_READ,
 			MAP_SHARED, fd, 0);
 
@@ -171,3 +180,20 @@ int fb_put_string(struct fb_info *fb_info, int x, int y, char *s, int maxlen,
 	return w;
 }
 
+int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
+	int clear)
+{
+	int i;
+	int w = 0;
+	int len = strlen(s);
+
+	if(clear)
+		fb_clear_area(fb_info, x, y, len * 8, 8);
+
+	for(i=0; i < len; i++) {
+		fb_put_char(fb_info, (x + 8 * i), y, s[i], color);
+		w += 8;
+	}
+
+	return w;
+}

@@ -23,6 +23,7 @@
 struct fb_info
 {
 	int fd;
+	char fb_name[64];
 
 	void *ptr;
 
@@ -41,5 +42,7 @@ void fb_update_window(int fd, short x, short y, short w, short h);
 void fb_sync_gfx(int fd);
 int fb_put_string(struct fb_info *fb_info, int x, int y, char *s, int maxlen,
 		int color, int clear, int clearlen);
+int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
+	int clear);
 
 #endif
