@@ -44,5 +44,6 @@ int fb_put_string(struct fb_info *fb_info, int x, int y, char *s, int maxlen,
 		int color, int clear, int clearlen);
 int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
 	int clear);
+void draw_pixel(struct fb_info *fb_info, int x, int y, unsigned color);
 
 #endif

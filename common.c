@@ -197,3 +197,44 @@ int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
 
 	return w;
 }
+
+void draw_pixel(struct fb_info *fb_info, int x, int y, unsigned color)
+{
+	void *fbmem;
+
+	fbmem = fb_info->ptr;
+
+	if (fb_info->var.bits_per_pixel == 16) {
+		unsigned short c;
+		unsigned r = (color >> 16) & 0xff;
+		unsigned g = (color >> 8) & 0xff;
+		unsigned b = (color >> 0) & 0xff;
+		unsigned short *p;
+
+		r = r * 32 / 256;
+		g = g * 64 / 256;
+		b = b * 32 / 256;
+
+		c = (r << 11) | (g << 5) | (b << 0);
+
+		fbmem += fb_info->fix.line_length * y;
+
+		p = fbmem;
+
+		p += x;
+
+		*p = c;
+	} else {
+		unsigned int *p;
+
+		fbmem += fb_info->fix.line_length * y;
+
+		p = fbmem;
+
+		p += x;
+
+		*p = color;
+	}
+}
+
+

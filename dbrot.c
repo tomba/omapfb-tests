@@ -33,7 +33,7 @@ struct frame_info
 	struct fb_info *fb_info;
 };
 
-static void draw_pixel(struct frame_info *frame, int x, int y, unsigned color)
+static void _draw_pixel(struct frame_info *frame, int x, int y, unsigned color)
 {
 	struct fb_info *fb_info = frame->fb_info;
 	void *fbmem;
@@ -80,7 +80,7 @@ static void draw_line(struct frame_info *frame,
 	int dx = x1 - x0;
 	float t = (float) 0.5;
 
-	draw_pixel(frame, x0, y0, 0xffffff);
+	_draw_pixel(frame, x0, y0, 0xffffff);
 	if (abs(dx) > abs(dy)) {
 		float m = (float) dy / (float) dx;
 		t += y0;
@@ -89,7 +89,7 @@ static void draw_line(struct frame_info *frame,
 		while (x0 != x1) {
 			x0 += dx;
 			t += m;
-			draw_pixel(frame, x0, (int)t, 0xffffff);
+			_draw_pixel(frame, x0, (int)t, 0xffffff);
 		}
 	} else {
 		float m = (float) dx / (float) dy;
@@ -99,7 +99,7 @@ static void draw_line(struct frame_info *frame,
 		while (y0 != y1) {
 			y0 += dy;
 			t += m;
-			draw_pixel(frame, (int)t, y0, 0xffffff);
+			_draw_pixel(frame, (int)t, y0, 0xffffff);
 		}
 	}
 }
