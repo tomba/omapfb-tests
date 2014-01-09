@@ -115,13 +115,13 @@ void fb_sync_gfx(int fd)
 	IOCTL0(fd, OMAPFB_SYNC_GFX);
 }
 
-static void fb_clear_area(struct fb_info *fb_info, int x, int y, int w, int h)
+void fb_clear_area(const struct fb_info *fb_info, int x, int y, int w, int h)
 {
 	int i = 0;
 	int loc;
 	char *fbuffer = (char *)fb_info->ptr;
-	struct fb_var_screeninfo *var = &fb_info->var;
-	struct fb_fix_screeninfo *fix = &fb_info->fix;
+	const struct fb_var_screeninfo *var = &fb_info->var;
+	const struct fb_fix_screeninfo *fix = &fb_info->fix;
 
 	for(i = 0; i < h; i++)
 	{
@@ -131,14 +131,14 @@ static void fb_clear_area(struct fb_info *fb_info, int x, int y, int w, int h)
 	}
 }
 
-static void fb_put_char(struct fb_info *fb_info, int x, int y, char c,
+static void fb_put_char(const struct fb_info *fb_info, int x, int y, char c,
 		unsigned color)
 {
 	int i, j, bits, loc;
 	unsigned short *p16;
 	unsigned int *p32;
-	struct fb_var_screeninfo *var = &fb_info->var;
-	struct fb_fix_screeninfo *fix = &fb_info->fix;
+	const struct fb_var_screeninfo *var = &fb_info->var;
+	const struct fb_fix_screeninfo *fix = &fb_info->fix;
 
 	for(i = 0; i < 8; i++) {
 		bits = fontdata_8x8[8 * c + i];
@@ -163,8 +163,8 @@ static void fb_put_char(struct fb_info *fb_info, int x, int y, char c,
 	}
 }
 
-int fb_put_string(struct fb_info *fb_info, int x, int y, char *s, int maxlen,
-		int color, int clear, int clearlen)
+int fb_put_string(const struct fb_info *fb_info, int x, int y, char *s,
+		int maxlen, int color, int clear, int clearlen)
 {
 	int i;
 	int w = 0;
@@ -180,8 +180,8 @@ int fb_put_string(struct fb_info *fb_info, int x, int y, char *s, int maxlen,
 	return w;
 }
 
-int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
-	int clear)
+int fb_put_string2(const struct fb_info *fb_info, int x, int y, char *s,
+		int color, int clear)
 {
 	int i;
 	int w = 0;
@@ -198,7 +198,7 @@ int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
 	return w;
 }
 
-void draw_pixel(struct fb_info *fb_info, int x, int y, unsigned color)
+void draw_pixel(const struct fb_info *fb_info, int x, int y, unsigned color)
 {
 	void *fbmem;
 
@@ -237,7 +237,7 @@ void draw_pixel(struct fb_info *fb_info, int x, int y, unsigned color)
 	}
 }
 
-void draw_test_pattern(struct fb_info *fb_info)
+void draw_test_pattern(const struct fb_info *fb_info)
 {
 	unsigned x, y;
 	unsigned h = fb_info->var.yres_virtual;

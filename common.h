@@ -40,11 +40,12 @@ extern char fontdata_8x8[];
 void fb_open(int fb_num, struct fb_info *fb_info, int reset);
 void fb_update_window(int fd, short x, short y, short w, short h);
 void fb_sync_gfx(int fd);
-int fb_put_string(struct fb_info *fb_info, int x, int y, char *s, int maxlen,
-		int color, int clear, int clearlen);
-int fb_put_string2(struct fb_info *fb_info, int x, int y, char *s, int color,
-	int clear);
-void draw_pixel(struct fb_info *fb_info, int x, int y, unsigned color);
-void draw_test_pattern(struct fb_info *fb_info);
+int fb_put_string(const struct fb_info *fb_info, int x, int y, char *s,
+		int maxlen, int color, int clear, int clearlen);
+int fb_put_string2(const struct fb_info *fb_info, int x, int y, char *s,
+		int color, int clear);
+void draw_pixel(const struct fb_info *fb_info, int x, int y, unsigned color);
+void draw_test_pattern(const struct fb_info *fb_info);
+void fb_clear_area(const struct fb_info *fb_info, int x, int y, int w, int h);
 
 #endif
