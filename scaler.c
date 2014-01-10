@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	init_fb_info(req_fb, &fb_info);
+	fb_init(req_fb, &fb_info);
 
 	if (ow == 0 || ow > fb_info.di.xres)
 		ow = fb_info.di.xres;
@@ -65,7 +65,9 @@ int main(int argc, char** argv)
 	if (max_h > 2048)
 		max_h = 2048;
 
-	setup_fb_mem(&fb_info, ow, oh, max_w, max_h);
+	fb_setup_mem(&fb_info, ow, oh, max_w, max_h);
+
+	fb_mmap(&fb_info);
 
 	draw_test_pattern(&fb_info);
 

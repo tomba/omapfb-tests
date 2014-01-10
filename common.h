@@ -39,10 +39,11 @@ extern char fontdata_8x8[];
 
 void fb_open(int fb_num, struct fb_info *fb_info, int reset);
 
-void init_fb_info(int fb_num, struct fb_info *fb_info);
-void setup_fb_mem(struct fb_info *fb_info,
+void fb_init(int fb_num, struct fb_info *fb_info);
+void fb_setup_mem(struct fb_info *fb_info,
 		unsigned xres, unsigned yres,
 		unsigned vxres, unsigned vyres);
+void fb_mmap(struct fb_info *fb_info);
 
 void fb_update_window(int fd, short x, short y, short w, short h);
 void fb_sync_gfx(int fd);
