@@ -331,10 +331,33 @@ void draw_test_pattern(const struct fb_info *fb_info)
 
 	sprintf(str, "%s: %dx%d", fb_info->fb_name, w, h);
 
-	fb_put_string2(fb_info, 20, 2, str, 0xffffff, 1);
+	fb_put_string2(fb_info, 0, 0, str, 0xffffff, 1);
 
 	fb_put_string(fb_info, w / 3 * 2, 30, "RED", 3, 0xffffff, 1, 3);
 	fb_put_string(fb_info, w / 3, 30, "GREEN", 5, 0xffffff, 1, 5);
 	fb_put_string(fb_info, 20, 30, "BLUE", 4, 0xffffff, 1, 4);
 }
 
+/* zigzag between [min, max] */
+int zigzag(int min, int max, int c)
+{
+	int d = max - min;
+
+	if (d == 0)
+		return min;
+
+	int div = c / d;
+	int rem = c % d;
+
+	if (div % 2 == 0)
+		return min + rem;
+	else
+		return max - rem;
+}
+
+int parse_xtimesy(const char *str, unsigned *x, unsigned *y)
+{
+	if (sscanf(str, "%dx%d", x, y) != 2)
+		return -EINVAL;
+	return 0;
+}
