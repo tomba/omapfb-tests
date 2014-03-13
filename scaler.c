@@ -40,7 +40,9 @@ int main(int argc, char** argv)
 	unsigned max_h = 0;
 	unsigned min_h = 0;
 
-	while ((opt = getopt(argc, argv, "f:s:l:h:")) != -1) {
+	int quiet = 0;
+
+	while ((opt = getopt(argc, argv, "f:s:l:h:q")) != -1) {
 		switch (opt) {
 		case 'f':
 			req_fb = atoi(optarg);
@@ -56,6 +58,9 @@ int main(int argc, char** argv)
 		case 'h':
 			if (parse_xtimesy(optarg, &max_w, &max_h) < 0)
 				usage();
+			break;
+		case 'q':
+			quiet = 1;
 			break;
 		default:
 			usage();
@@ -105,10 +110,11 @@ int main(int argc, char** argv)
 		var->yres = ih;
 		IOCTL1(fb_info.fd, FBIOPUT_VSCREENINFO, var);
 
-		printf("%f, %f -- %d x %d -> %d x %d\n",
-				(float)iw / ow, (float)ih / oh,
-				iw, ih,
-				ow, oh);
+		if (!quiet)
+			printf("%f, %f -- %d x %d -> %d x %d\n",
+					(float)iw / ow, (float)ih / oh,
+					iw, ih,
+					ow, oh);
 
 		if (fb_info.update_mode == OMAPFB_MANUAL_UPDATE) {
 			fb_update_window(fb_info.fd, 0, 0,
