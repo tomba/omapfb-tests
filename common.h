@@ -53,6 +53,7 @@ int fb_put_string2(const struct fb_info *fb_info, int x, int y, char *s,
 		int color, int clear);
 void draw_pixel(const struct fb_info *fb_info, int x, int y, unsigned color);
 void draw_test_pattern(const struct fb_info *fb_info);
+void draw_test_pattern2(const struct fb_info *fb_info);
 void fb_clear_area(const struct fb_info *fb_info, int x, int y, int w, int h);
 
 int zigzag(int min, int max, int c);

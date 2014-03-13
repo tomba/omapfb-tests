@@ -338,6 +338,22 @@ void draw_test_pattern(const struct fb_info *fb_info)
 	fb_put_string(fb_info, 20, 30, "BLUE", 4, 0xffffff, 1, 4);
 }
 
+void draw_test_pattern2(const struct fb_info *fb_info)
+{
+	unsigned x, y;
+	unsigned h = fb_info->var.yres_virtual;
+	unsigned w = fb_info->var.xres_virtual;
+
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
+			if (x == 0 || x == w - 1 || y == 0 || y == h - 1)
+				draw_pixel(fb_info, x, y, 0xffffff);
+			else
+				draw_pixel(fb_info, x, y, 0);
+		}
+	}
+}
+
 /* zigzag between [min, max] */
 int zigzag(int min, int max, int c)
 {
