@@ -2,6 +2,8 @@
 #define __COMMON_H__
 
 #include <stdio.h>
+#include <stdint.h>
+#include <time.h>
 #include <linux/fb.h>
 #include <linux/omapfb.h>
 
@@ -58,5 +60,8 @@ void fb_clear_area(const struct fb_info *fb_info, int x, int y, int w, int h);
 
 int zigzag(int min, int max, int c);
 int parse_xtimesy(const char *str, unsigned *x, unsigned *y);
+
+void get_time_now(struct timespec *ts);
+uint64_t get_time_elapsed_us(const struct timespec *ts_start, const struct timespec *ts_end);
 
 #endif

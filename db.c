@@ -125,12 +125,14 @@ static void update_window(struct fb_info *fb_info,
 }
 
 static unsigned long min_pan_us, max_pan_us, sum_pan_us;
-static struct timeval tv1;
-static struct timeval ftv1;
+static struct timespec tv1;
+static struct timespec ftv1;
+static uint64_t draw_total_time;
+static int num_draws;
 
 static void init_perf()
 {
-	gettimeofday(&ftv1, NULL);
+	get_time_now(&ftv1);
 	min_pan_us = 0xffffffff;
 	max_pan_us = 0;
 	sum_pan_us = 0;
@@ -139,43 +141,49 @@ static void init_perf()
 static void perf_frame(int frame)
 {
 	const int num_frames = 100;
+	uint64_t us;
 	unsigned long ms;
-	struct timeval ftv2, tv;
+	struct timespec ftv2;
 
 	if (frame > 0 && frame % num_frames == 0) {
-		gettimeofday(&ftv2, NULL);
-		timersub(&ftv2, &ftv1, &tv);
+		get_time_now(&ftv2);
 
-		ms = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+		us = get_time_elapsed_us(&ftv1, &ftv2);
+		ms = us / 1000;
+
+		float draw_avg = (float)draw_total_time / num_draws / 1000;
 
 		printf("%d frames in %lu ms, %lu fps, "
-				"pan min %lu, max %lu, avg %lu\n",
+				"pan min %lu, max %lu, avg %lu, draw avg %f ms\n",
 				num_frames,
 				ms, num_frames * 1000 / ms,
 				min_pan_us, max_pan_us,
-				sum_pan_us / num_frames);
+				sum_pan_us / num_frames,
+				draw_avg);
 
-		gettimeofday(&ftv1, NULL);
+		get_time_now(&ftv1);
 		min_pan_us = 0xffffffff;
 		max_pan_us = 0;
 		sum_pan_us = 0;
+
+		draw_total_time = 0;
+		num_draws = 0;
 	}
 }
 
 void perf_pan_start()
 {
-	gettimeofday(&tv1, NULL);
+	get_time_now(&tv1);
 }
 
 void perf_pan_stop()
 {
 	unsigned long us;
-	struct timeval tv2, tv;
+	struct timespec tv2;
 
-	gettimeofday(&tv2, NULL);
-	timersub(&tv2, &tv1, &tv);
+	get_time_now(&tv2);
 
-	us = tv.tv_sec * 1000000 + tv.tv_usec;
+	us = get_time_elapsed_us(&tv1, &tv2);
 
 	if (us > max_pan_us)
 		max_pan_us = us;
@@ -408,9 +416,18 @@ int main(int argc, char **argv)
 			int bar_xpos = (frame * speed) %
 				(var->xres - bar_width);
 
+			struct timespec ts1, ts2;
+
+			get_time_now(&ts1);
+
 			clear_frame(current_frame);
 
 			draw_bar(current_frame, bar_xpos, bar_width);
+
+			get_time_now(&ts2);
+
+			draw_total_time += get_time_elapsed_us(&ts1, &ts2);
+			num_draws++;
 		}
 	}
 
