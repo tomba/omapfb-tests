@@ -100,8 +100,8 @@ static void draw_bar(struct frame_info *frame, int xpos, int width)
 		unsigned int *lp32 = frame->addr + y * frame->line_len;
 		unsigned short *lp16 = frame->addr + y * frame->line_len;
 
-		c16 = colors16[y / (frame->yres / (sizeof(colors16) / 2))];
-		c32 = colors32[y / (frame->yres / (sizeof(colors32) / 4))];
+		c16 = colors16[y * sizeof(colors16) / 2 / frame->yres];
+		c32 = colors32[y * sizeof(colors32) / 4 / frame->yres];
 
 		for (x = xpos; x < xpos+width; ++x) {
 			if (frame->fb_info->bytespp == 2)
